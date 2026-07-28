@@ -5,7 +5,7 @@ MemoryForge AI gives agents an operating memory: structured experience that can 
 ## Live demo
 
 - App: https://memoryforge-ai-demo.ljs2546.chatgpt.site
-- Video: https://youtu.be/e8eybLsI--g
+- Video: https://youtu.be/s_crK7qGYyc
 
 ## Demo flow
 
