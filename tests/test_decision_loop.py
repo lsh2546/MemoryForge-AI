@@ -6,8 +6,8 @@ import unittest
 from pathlib import Path
 
 
-SRC = Path(__file__).resolve().parents[1] / "src"
-sys.path.insert(0, str(SRC))
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 os.environ.setdefault("DATABASE_URL", "postgresql://test:test@localhost:26257/test")
 
 
@@ -32,7 +32,7 @@ rows = types.ModuleType("psycopg.rows")
 rows.dict_row = object()
 sys.modules.setdefault("psycopg.rows", rows)
 
-import lambda_handler  # noqa: E402
+from src import lambda_handler  # noqa: E402
 
 
 class FakeEngine:

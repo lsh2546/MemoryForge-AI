@@ -3,7 +3,7 @@
 import json
 import os
 import boto3
-from memory_engine import Memory, MemoryEngine
+from .memory_engine import Memory, MemoryEngine
 
 bedrock = boto3.client("bedrock-runtime")
 engine = MemoryEngine()
