@@ -66,13 +66,15 @@ Copy `.env.example` to `.env` for local work. Never commit the populated file.
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | Yes | CockroachDB PostgreSQL connection string with `sslmode=verify-full&sslrootcert=system` |
+| `DATABASE_URL` | Yes | CockroachDB PostgreSQL connection string with `sslmode=verify-full` |
 | `AWS_REGION` | Yes | Region used by the Bedrock Runtime client and Lambda |
 | `EMBEDDING_MODEL_ID` | Yes | Bedrock embedding model; defaults to Titan Text Embeddings v2 |
 | `MEMORYFORGE_AGENT_ID` | Local demo only | Stable agent identity used by the two-run example |
 
 The production embedding contract is explicitly 1024 dimensions and matches
 `agent_memories.embedding VECTOR(1024)`.
+The Python driver uses the packaged `certifi` CA bundle while retaining full TLS
+certificate verification in both local and Lambda environments.
 
 ## Create the CockroachDB schema
 

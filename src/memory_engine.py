@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 from typing import Any
 import os
+import certifi
 import psycopg
 from psycopg.rows import dict_row
 
@@ -22,6 +23,10 @@ class MemoryEngine:
     def __init__(self, database_url: str | None = None):
         self.database_url = database_url or os.environ["DATABASE_URL"]
 
+    def connect(self, **kwargs):
+        """Use the packaged public CA bundle without weakening TLS verification."""
+        return psycopg.connect(self.database_url, sslrootcert=certifi.where(), **kwargs)
+
     def remember(self, agent_id: str, memory: Memory, embedding: list[float]) -> str:
         query = """
             INSERT INTO agent_memories
@@ -30,7 +35,7 @@ class MemoryEngine:
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s::VECTOR)
             RETURNING id
         """
-        with psycopg.connect(self.database_url) as connection:
+        with self.connect() as connection:
             return str(connection.execute(
                 query,
                 (
@@ -49,7 +54,7 @@ class MemoryEngine:
             ORDER BY embedding <=> %s::VECTOR
             LIMIT %s
         """
-        with psycopg.connect(self.database_url, row_factory=dict_row) as connection:
+        with self.connect(row_factory=dict_row) as connection:
             return list(connection.execute(query, (embedding, agent_id, embedding, limit)))
 
     @staticmethod
