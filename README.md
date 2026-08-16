@@ -170,6 +170,10 @@ Cloud. With the same agent and task payload:
 - Run 2 recalled that exact ID, returned it as `plan.adapted_from_memory`, changed
   the strategy to `async_job_with_health_check`, and returned `success`.
 - The automated equality and outcome check returned `same_memory_changed_action: true`.
+- CockroachDB Cloud Managed MCP `select_query` independently returned the same
+  UUID as a `failure` memory with decision `async_job_with_health_check`, outcome
+  `timeout`, and confidence `0.96`. The read-only reproduction script is
+  [`scripts/managed_mcp_query.mjs`](scripts/managed_mcp_query.mjs).
 
 The 2 minute 14 second demo video shows the application states and the live AWS
 invocation evidence without exposing the database URL, credentials, or environment values.
