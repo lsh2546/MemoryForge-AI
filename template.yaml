@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: MemoryForge AI persistent-memory Lambda
+
+Parameters:
+  DatabaseUrl:
+    Type: String
+    NoEcho: true
+  EmbeddingModelId:
+    Type: String
+    Default: amazon.titan-embed-text-v2:0
+
+Resources:
+  MemoryForgeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: memoryforge-ai-agent
+      CodeUri: .
+      Handler: src.lambda_handler.handler
+      Runtime: python3.12
+      Timeout: 30
+      MemorySize: 512
+      ReservedConcurrentExecutions: 2
+      Environment:
+        Variables:
+          DATABASE_URL: !Ref DatabaseUrl
+          EMBEDDING_MODEL_ID: !Ref EmbeddingModelId
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action: bedrock:InvokeModel
+              Resource: !Sub arn:${AWS::Partition}:bedrock:${AWS::Region}::foundation-model/${EmbeddingModelId}
+
+Outputs:
+  FunctionName:
+    Value: !Ref MemoryForgeFunction

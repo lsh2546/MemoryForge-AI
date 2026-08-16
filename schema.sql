@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS agent_memories (
   decision STRING,
   outcome STRING,
   reasoning STRING,
-  embedding VECTOR(1536),
+  embedding VECTOR(1024),
   confidence DECIMAL NOT NULL DEFAULT 0.5,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   last_accessed_at TIMESTAMPTZ NOT NULL DEFAULT now()

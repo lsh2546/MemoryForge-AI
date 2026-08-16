@@ -12,7 +12,7 @@ engine = MemoryEngine()
 def embed(text: str) -> list[float]:
     response = bedrock.invoke_model(
         modelId=os.environ.get("EMBEDDING_MODEL_ID", "amazon.titan-embed-text-v2:0"),
-        body=json.dumps({"inputText": text}),
+        body=json.dumps({"inputText": text, "dimensions": 1024, "normalize": True}),
     )
     return json.loads(response["body"].read())["embedding"]
 
@@ -30,7 +30,7 @@ def handler(event, _context):
     # The executor can be replaced with a Step Functions or deployment tool call.
     if plan["strategy"] == "synchronous_deployment":
         result = {"status": "failed", "reason": "execution timed out"}
-        engine.remember(
+        written_memory_id = engine.remember(
             agent_id,
             Memory(
                 memory_type="failure",
@@ -45,7 +45,7 @@ def handler(event, _context):
         )
     else:
         result = {"status": "success", "strategy": plan["strategy"]}
-        engine.remember(
+        written_memory_id = engine.remember(
             agent_id,
             Memory(
                 memory_type="success",
@@ -59,4 +59,12 @@ def handler(event, _context):
             task_embedding,
         )
 
-    return {"statusCode": 200, "body": json.dumps({"plan": plan, "result": result})}
+    return {
+        "statusCode": 200,
+        "body": json.dumps({
+            "plan": plan,
+            "result": result,
+            "recalled_memory_ids": [str(memory["id"]) for memory in recalled],
+            "written_memory_id": written_memory_id,
+        }),
+    }
