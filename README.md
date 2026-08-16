@@ -5,7 +5,7 @@ MemoryForge AI gives agents an operating memory: structured experience that can 
 ## Live demo
 
 - App: https://memoryforge-ai-demo.ljs2546.chatgpt.site
-- Video: https://youtu.be/s_crK7qGYyc
+- Video: https://youtu.be/RNgBt4bOOMI
 
 ## Demo flow
 
@@ -158,3 +158,18 @@ next action rather than merely displaying history.
 - Do not expose database credentials, Bedrock responses, or stack traces to a browser.
 - Use a least-privilege CockroachDB user and a reserved concurrency limit.
 - Parameterized SQL is used for every memory value; arbitrary SQL is not accepted.
+
+## Verified deployment evidence
+
+The submitted demo was re-run against the deployed `memoryforge-ai-agent`
+Lambda in `us-east-1`, Amazon Bedrock Titan Text Embeddings v2, and CockroachDB
+Cloud. With the same agent and task payload:
+
+- Run 1 returned `failed` with `synchronous_deployment` and wrote memory
+  `c7a7eb57-dd10-4163-8618-88c9232c2678`.
+- Run 2 recalled that exact ID, returned it as `plan.adapted_from_memory`, changed
+  the strategy to `async_job_with_health_check`, and returned `success`.
+- The automated equality and outcome check returned `same_memory_changed_action: true`.
+
+The 2 minute 14 second demo video shows the application states and the live AWS
+invocation evidence without exposing the database URL, credentials, or environment values.

@@ -1,0 +1,15 @@
+An AI agent should not repeat the same failure twice. This is MemoryForge AI, a persistent operating memory for agent decisions.
+
+The task is to deploy checkout service version two point four and report only after production health is verified. On Run One, the agent has no matching failure memory. It chooses a synchronous deployment, exceeds the execution limit, and fails.
+
+That failure is not only displayed in the interface. Amazon Bedrock creates a normalized, one thousand twenty-four dimensional embedding. AWS Lambda writes the structured task, failed strategy, outcome, reasoning, confidence, and embedding into CockroachDB. CockroachDB returns this real memory ID.
+
+Now the exact same task is sent to the same deployed Lambda again. CockroachDB vector recall returns the memory created by Run One. The response places that same ID in adapted from memory.
+
+Because the retrieved failure is relevant and confident, the next action changes from synchronous deployment to an asynchronous job with a health check. Run Two succeeds, and the successful outcome is written back as another durable memory.
+
+This is the live AWS CloudShell evidence. Run One failed and wrote memory c seven a seven. Run Two recalled the identical full UUID. The strategy changed, the result is success, and the automated causal check is true.
+
+The repository includes the complete installation steps, environment variables, CockroachDB schema and vector index, local two-run invocation, and AWS SAM deployment instructions. Secrets remain server-side, TLS certificate verification stays enabled, SQL values are parameterized, and Lambda concurrency is limited.
+
+MemoryForge demonstrates the full agentic memory loop: fail, write, recall, change action, and succeed.

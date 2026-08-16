@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+evidence/video/audio/
+evidence/video/frames/
+evidence/video/render/
