@@ -6,6 +6,7 @@ import os
 import certifi
 import psycopg
 from psycopg.rows import dict_row
+from psycopg.types.json import Jsonb
 
 
 @dataclass
@@ -27,6 +28,10 @@ class MemoryEngine:
         """Use the packaged public CA bundle without weakening TLS verification."""
         return psycopg.connect(self.database_url, sslrootcert=certifi.where(), **kwargs)
 
+    @staticmethod
+    def vector_literal(embedding: list[float]) -> str:
+        return "[" + ",".join(str(value) for value in embedding) + "]"
+
     def remember(self, agent_id: str, memory: Memory, embedding: list[float]) -> str:
         query = """
             INSERT INTO agent_memories
@@ -39,9 +44,9 @@ class MemoryEngine:
             return str(connection.execute(
                 query,
                 (
-                    agent_id, memory.memory_type, memory.task_context,
+                    agent_id, memory.memory_type, Jsonb(memory.task_context),
                     memory.summary, memory.decision, memory.outcome,
-                    memory.reasoning, memory.confidence, embedding,
+                    memory.reasoning, memory.confidence, self.vector_literal(embedding),
                 ),
             ).fetchone()[0])
 
@@ -55,7 +60,8 @@ class MemoryEngine:
             LIMIT %s
         """
         with self.connect(row_factory=dict_row) as connection:
-            return list(connection.execute(query, (embedding, agent_id, embedding, limit)))
+            vector = self.vector_literal(embedding)
+            return list(connection.execute(query, (vector, agent_id, vector, limit)))
 
     @staticmethod
     def adapt_plan(default_plan: dict, memories: list[dict]) -> dict:

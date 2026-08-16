@@ -31,6 +31,10 @@ sys.modules.setdefault("psycopg", types.ModuleType("psycopg"))
 rows = types.ModuleType("psycopg.rows")
 rows.dict_row = object()
 sys.modules.setdefault("psycopg.rows", rows)
+json_types = types.ModuleType("psycopg.types.json")
+json_types.Jsonb = lambda value: value
+sys.modules.setdefault("psycopg.types", types.ModuleType("psycopg.types"))
+sys.modules.setdefault("psycopg.types.json", json_types)
 
 from src import lambda_handler  # noqa: E402
 
